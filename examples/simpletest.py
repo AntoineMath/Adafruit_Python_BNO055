@@ -79,7 +79,8 @@ while True:
     # Magnetometer data (in micro-Teslas):
     #x,y,z = bno.read_magnetometer()
     # Gyroscope data (in degrees per second):
-    #x,y,z = bno.read_gyroscope()
+    x,y,z = bno.read_gyroscope()
+    print("gyroX={}, gyroY={}, gyroZ={}\t".format(x,y,z))
     # Accelerometer data (in meters per second squared):
     #x,y,z = bno.read_accelerometer()
     # Linear acceleration data (i.e. acceleration from movement, not gravity--
