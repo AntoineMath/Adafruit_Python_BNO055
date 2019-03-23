@@ -28,11 +28,11 @@ def manual_drive(): #You will use this function to program your ESC if required
             stop()
             break
 		elif inp == "control":
-			control()
-			break
+            control()
+            break
 		elif inp == "arm":
-			arm()
-			break
+            arm()
+            break
         else:
             pi.set_servo_pulsewidth(ESC,inp)
 
@@ -87,8 +87,8 @@ def control():
             manual_drive()
             break
 		elif inp == "arm":
-			arm()
-			break
+            arm()
+            break
         else:
             print ("WHAT DID I SAID!! Press a,q,d or e")
 
@@ -108,7 +108,7 @@ def stop(): #This will stop every action your Pi is performing for ESC ofcourse.
     pi.set_servo_pulsewidth(ESC, 0)
     pi.stop()
 
-#This is the start of the program actually, to start the function it needs to be initialized before calling... stupid python.
+#This is the start of the program actually, to start the function it needs n to be initialized before calling... stupid python.
 inp = raw_input()
 if inp == "manual":
     manual_drive()
