@@ -25,7 +25,7 @@ import logging
 import sys
 import time
 
-from Adafruit_Python_BNO055 import BNO055
+from Adafruit_BNO055 import BNO055
 
 
 # Create and configure the BNO sensor connection.  Make sure only ONE of the
@@ -69,8 +69,9 @@ while True:
     # Read the calibration status, 0=uncalibrated and 3=fully calibrated.
     sys, gyro, accel, mag = bno.get_calibration_status()
     # Print everything out.
-    print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
-          heading, roll, pitch, sys, gyro, accel, mag))
+    if(gyro != 3):
+        print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F} Sys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+              heading, roll, pitch, sys, gyro, accel, mag))
     # Other values you can optionally read:
     # Orientation as a quaternion:
     #x,y,z,w = bno.read_quaterion()
@@ -80,9 +81,10 @@ while True:
     #x,y,z = bno.read_magnetometer()
     # Gyroscope data (in degrees per second):
     x,y,z = bno.read_gyroscope()
-    print("gyroX={}, gyroY={}, gyroZ={}\t".format(x,y,z))
+    print("heading={}, roll={}, pitch={}\t".format(heading,roll,pitch))
     # Accelerometer data (in meters per second squared):
     #x,y,z = bno.read_accelerometer()
+    #print("X={},   Y={},   Z={}".format(x,y,z))
     # Linear acceleration data (i.e. acceleration from movement, not gravity--
     # returned in meters per second squared):
     #x,y,z = bno.read_linear_acceleration()
