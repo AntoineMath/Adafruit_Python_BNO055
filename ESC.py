@@ -7,7 +7,7 @@ import os     #importing os library so as to communicate with the system
 import time   #importing time library to make Rpi wait because its too impatient
 #os.system ("sudo pigpiod") #Launching GPIO library
 #time.sleep(1) # As i said it is too impatient and so if this delay is removed you will get an error
-i#mport pigpio #importing GPIO library
+#import pigpio #importing GPIO library
 
 import RPi.GPIO as GPIO
 ESC=4  #Connect the ESC in this GPIO pin
@@ -15,11 +15,14 @@ ESC=4  #Connect the ESC in this GPIO pin
 #pi = pigpio.pi();
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(ESC,GPIO.OUT)
-GPIO.PWM(ESC,0)
+pwm = GPIO.PWM(ESC,200)
+pwm.start(20) #1ms pulseation
+
+
 #pi.set_servo_pulsewidth(ESC, 0)
 
-max_value = 943 #change this if your ESC's max value is different or leave it be
-min_value = 538  #change this if your ESC's min value is different or leave it be
+max_value = 40 #2ms puls
+min_value = 20 #1 ms puls
 print ("For first time launch, select calibrate")
 print ("Type the exact word for the function you want")
 print ("calibrate OR manual OR control OR arm OR stop")
@@ -39,30 +42,30 @@ def manual_drive(): #You will use this function to program your ESC if required
             break
         else:
             #pi.set_servo_pulsewidth(ESC,inp)
-            GPIO.PWM(ESC,inp)
+            pwm.ChangeDutyCycle(inp)
 
 def calibrate():   #This is the auto calibration procedure of a normal ESC
     #pi.set_servo_pulsewidth(ESC, 0)
-    GPIO.PWM(ESC,0)
+    pwm.ChangeDutyCycle(0)
     print("Disconnect the battery and press Enter")
     inp = raw_input()
     if inp == '':
         #pi.set_servo_pulsewidth(ESC, max_value)
-        GPIO.PWM(ESC,max_value)
+        pwm.ChangeDutyCycle(max_value)
         print("Connect the battery NOW.. you will here two beeps, then wait for a gradual falling tone then press Enter")
         inp = raw_input()
         if inp == '':
             #pi.set_servo_pulsewidth(ESC, min_value)
-            GPIO.PWM(ESC,min_value)
+            pwm.ChangeDutyCycle(min_value)
             print ("Wierd eh! Special tone")
             time.sleep(7)
             print ("Wait for it ....")
             time.sleep (5)
             print ("Im working on it, DONT WORRY JUST WAIT.....")
             #pi.set_servo_pulsewidth(ESC, 0)
-            GPIO.PWM(ESC,0)
+            pwm.ChangeDutyCycle(0)
             #pi.set_servo_pulsewidth(ESC, min_value)
-            GPIO.PWM(ESC,min_value)
+            pwm.ChangeDutyCycle(min_value)
             time.sleep(1)
             print ("See.... uhhhhh")
             control() # You can change this to any other function you want
@@ -71,25 +74,25 @@ def control():
     print ("I'm Starting the motor, I hope its calibrated and armed, if not restart by giving 'x'")
     time.sleep(1)
     #speed = 1500    # change your speed if you want to.... it should be between 700 - 2000
-    speed = min_value
+    dc = min_value
     print ("increase + 5 :a, increase +50 :e, decrease -5 :q, decrease -50 :d")
     while True:
         #pi.set_servo_pulsewidth(ESC, speed)
-        GPIO.PWM(ESC,speed)
+        pwm.ChangeDutyCycle(dc)
         inp = raw_input()
 
         if inp == "d":
-            speed -= 50    # decrementing the speed like hell
-            print ("speed = %d" % speed)
+            dc -= 1    # decrementing the speed like hell
+            print ("speed = %d" % dc)
         elif inp == "e":
-            speed += 50    # incrementing the speed like hell
-            print ("speed = %d" % speed)
+            dc += 1    # incrementing the speed like hell
+            print ("speed = %d" % dc)
         elif inp == "a":
-            speed += 5     # incrementing the speed
-            print ("speed = %d" % speed)
+            speed += 0.15     # incrementing the speed
+            print ("speed = %d" % dc)
         elif inp == "q":
-            speed -= 5     # decrementing the speed
-            print ("speed = %d" % speed)
+            speed -= 0.15     # decrementing the speed
+            print ("speed = %d" % dc)
         elif inp == "stop":
             stop()          #going for the stop function
             break
@@ -107,21 +110,21 @@ def arm(): #This is the arming procedure of an ESC
     inp = raw_input()
     if inp == '':
         #pi.set_servo_pulsewidth(ESC, 0)
-        GPIO.PWM(ESC,0)
+        pwm.ChangeDutyCycle(0)
         time.sleep(1)
         #pi.set_servo_pulsewidth(ESC, max_value)
-        GPIO.PWM(ESC,max_value)
+        pwm.ChangeDutyCycle(max_value)
         time.sleep(1)
         #pi.set_servo_pulsewidth(ESC, min_value)
-        GPIO.PWM(ESC,min_value)
+        pwm.ChangeDutyCycle(min_value)
         time.sleep(1)
         control()
 
 def stop(): #This will stop every action your Pi is performing for ESC ofcourse.
     #pi.set_servo_pulsewidth(ESC, 0)
-    GPIO.PWM(ESC,0)
+    pwm.ChangeDutyCycle(0)
     #pi.stop()
-    GPIO.PWM(ESC,0).stop()
+    pwm.stop()
 
 #This is the start of the program actually, to start the function it needs n to be initialized before calling... stupid python.
 inp = raw_input()
