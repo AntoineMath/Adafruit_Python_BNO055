@@ -10,25 +10,36 @@ import time   #importing time library to make Rpi wait because its too impatient
 #import pigpio #importing GPIO library
 
 import RPi.GPIO as GPIO
-ESC=4  #Connect the ESC in this GPIO pin
+ESC1=4  #Connect the ESC in this GPIO pin
+ESC2=27
+ESC3=22
+ESC4=26
 
-#pi = pigpio.pi();
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(ESC,GPIO.OUT)
-pwm = GPIO.PWM(ESC,200)
-pwm.start(20) #1ms pulseation
 
+GPIO.setup(ESC1,GPIO.OUT)
+GPIO.setup(ESC2,GPIO.OUT)
+GPIO.setup(ESC3,GPIO.OUT)
+GPIO.setup(ESC4,GPIO.OUT)
 
-#pi.set_servo_pulsewidth(ESC, 0)
+pwm1 = GPIO.PWM(ESC1,200)
+pwm2 = GPIO.PWM(ESC2,200)
+pwm3 = GPIO.PWM(ESC3,200)
+pwm4 = GPIO.PWM(ESC4,200)
 
-max_value = 40 #2ms puls
-min_value = 15 #1 ms puls
+pwm1.start(20) #1ms pulseation
+pwm2.start(20)
+pwm3.start(20)
+pwm4.start(20)
+
+max_value = 40 #2ms puls (max throttle)
+min_value = 15 # <1060 microsec to arm
 print ("For first time launch, select calibrate")
 print ("Type the exact word for the function you want")
 print ("calibrate OR manual OR control OR arm OR stop")
 
 def manual_drive(): #You will use this function to program your ESC if required
-    print ("You have selected manual option so give a value between 0 and you max value")
+    print ("You have selected manual option so give a value between min_value and you max value")
     while True:
         inp = raw_input()
         if inp == "stop":
@@ -42,20 +53,24 @@ def manual_drive(): #You will use this function to program your ESC if required
             break
         else:
             #pi.set_servo_pulsewidth(ESC,inp)
-            pwm.ChangeDutyCycle(inp)
+            pwm1.ChangeDutyCycle(inp)
+            pwm2.ChangeDutyCycle(inp)
+            pwm3.ChangeDutyCycle(inp)
+            pwm4.ChangeDutyCycle(inp)
 
 def calibrate():   #This is the auto calibration procedure of a normal ESC
-    #pi.set_servo_pulsewidth(ESC, 0)
     pwm.ChangeDutyCycle(0)
     print("Disconnect the battery and press Enter")
     inp = raw_input()
     if inp == '':
         #pi.set_servo_pulsewidth(ESC, max_value)
-        pwm.ChangeDutyCycle(max_value)
+        pwm1.ChangeDutyCycle(max_value)
+        pwm2.ChangeDutyCycle(max_value)
+        pwm3.ChangeDutyCycle(max_value)
+        pwm4.ChangeDutyCycle(max_value)
         print("Connect the battery NOW.. you will here two beeps, then wait for a gradual falling tone then press Enter")
         inp = raw_input()
         if inp == '':
-            #pi.set_servo_pulsewidth(ESC, min_value)
             pwm.ChangeDutyCycle(min_value)
             print ("Wierd eh! Special tone")
             time.sleep(7)
@@ -63,9 +78,15 @@ def calibrate():   #This is the auto calibration procedure of a normal ESC
             time.sleep (5)
             print ("Im working on it, DONT WORRY JUST WAIT.....")
             #pi.set_servo_pulsewidth(ESC, 0)
-            pwm.ChangeDutyCycle(0)
+            pwm1.ChangeDutyCycle(0)
+            pwm2.ChangeDutyCycle(0)
+            pwm3.ChangeDutyCycle(0)
+            pwm4.ChangeDutyCycle(0)
             #pi.set_servo_pulsewidth(ESC, min_value)
-            pwm.ChangeDutyCycle(min_value)
+            pwm1.ChangeDutyCycle(min_value)
+            pwm2.ChangeDutyCycle(min_value)
+            pwm3.ChangeDutyCycle(min_value)
+            pwm4.ChangeDutyCycle(min_value)
             time.sleep(1)
             print ("See.... uhhhhh")
             control() # You can change this to any other function you want
@@ -78,7 +99,10 @@ def control():
     print ("increase + 5 :a, increase +50 :e, decrease -5 :q, decrease -50 :d")
     while True:
         #pi.set_servo_pulsewidth(ESC, speed)
-        pwm.ChangeDutyCycle(dc)
+        pwm1.ChangeDutyCycle(dc)
+        pwm2.ChangeDutyCycle(dc)
+        pwm3.ChangeDutyCycle(dc)
+        pwm4.ChangeDutyCycle(dc)
         inp = raw_input()
 
         if inp == "d":
@@ -121,10 +145,15 @@ def arm(): #This is the arming procedure of an ESC
         control()
 
 def stop(): #This will stop every action your Pi is performing for ESC ofcourse.
-    #pi.set_servo_pulsewidth(ESC, 0)
-    pwm.ChangeDutyCycle(0)
-    #pi.stop()
-    pwm.stop()
+    pwm1.ChangeDutyCycle(0)
+    pwm2.ChangeDutyCycle(0)
+    pwm3.ChangeDutyCycle(0)
+    pwm4.ChangeDutyCycle(0)
+
+    pwm1.stop()
+    pwm2.stop()
+    pwm3.stop()
+    pwm4.stop()
 
 #This is the start of the program actually, to start the function it needs n to be initialized before calling... stupid python.
 inp = raw_input()
