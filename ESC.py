@@ -22,7 +22,7 @@ pwm.start(20) #1ms pulseation
 #pi.set_servo_pulsewidth(ESC, 0)
 
 max_value = 40 #2ms puls
-min_value = 20 #1 ms puls
+min_value = 15 #1 ms puls
 print ("For first time launch, select calibrate")
 print ("Type the exact word for the function you want")
 print ("calibrate OR manual OR control OR arm OR stop")
@@ -34,10 +34,10 @@ def manual_drive(): #You will use this function to program your ESC if required
         if inp == "stop":
             stop()
             break
-		elif inp == "control":
+        elif inp == "control":
             control()
             break
-		elif inp == "arm":
+        elif inp == "arm":
             arm()
             break
         else:
@@ -88,10 +88,10 @@ def control():
             dc += 1    # incrementing the speed like hell
             print ("speed = %d" % dc)
         elif inp == "a":
-            speed += 0.15     # incrementing the speed
+            dc += 0.15     # incrementing the speed
             print ("speed = %d" % dc)
         elif inp == "q":
-            speed -= 0.15     # decrementing the speed
+            dc -= 0.15     # decrementing the speed
             print ("speed = %d" % dc)
         elif inp == "stop":
             stop()          #going for the stop function
@@ -99,7 +99,7 @@ def control():
         elif inp == "manual":
             manual_drive()
             break
-		elif inp == "arm":
+        elif inp == "arm":
             arm()
             break
         else:
